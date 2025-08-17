@@ -48,4 +48,5 @@ def get_hodl_wave_30d():
     headers = {"x-api-key": CQ_API_KEY}
     data = requests.get(BASE_URL + endpoint, headers=headers).json()
     # 30–90 day band
-    return float(data["data"][-1]
+    return float(data["data"][-1]["30d-90d"])
+
