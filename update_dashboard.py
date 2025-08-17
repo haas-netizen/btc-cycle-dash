@@ -36,17 +36,17 @@ def get_mvrv_zscore():
     response = requests.get(BASE_URL + endpoint, headers=headers).json()
     return float(response["data"][-1]["value"])
 
-def get_puell_multiple():
-    endpoint = "/v2/bitcoin/miner-puell-multiple?window=1h"
+def get_mvrv_zscore():
+    endpoint = "/v2/bitcoin/market-mvrv-zscore?window=1d"
     headers = {"x-api-key": CQ_API_KEY}
     response = requests.get(BASE_URL + endpoint, headers=headers).json()
     return float(response["data"][-1]["value"])
 
-def get_hodl_wave_30d():
-    endpoint = "/v2/bitcoin/flow-ageband?window=1h"
+def get_puell_multiple():
+    endpoint = "/v2/bitcoin/miner-puell-multiple?window=1d"
     headers = {"x-api-key": CQ_API_KEY}
-    data = requests.get(BASE_URL + endpoint, headers=headers).json()
-    return float(data["data"][-1]["30d-90d"])
+    response = requests.get(BASE_URL + endpoint, headers=headers).json()
+    return float(response["data"][-1]["value"])
 
 def get_funding_rate():
     url = "https://fapi.binance.com/fapi/v1/fundingRate"
