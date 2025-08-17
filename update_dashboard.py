@@ -33,14 +33,15 @@ THRESHOLDS = {
 def get_mvrv_zscore():
     endpoint = "/bitcoin/market-mvrv-zscore?window=1h"
     headers = {"x-api-key": CQ_API_KEY}
-    data = requests.get(BASE_URL + endpoint, headers=headers).json()
-    return float(data["data"][-1]["value"])
+    response = requests.get(BASE_URL + endpoint, headers=headers).json()
+    # CryptoQuant wraps values under ["data"] list. Last value is the most recent.
+    return float(response["data"][-1]["value"])
 
 def get_puell_multiple():
     endpoint = "/bitcoin/miner-puell-multiple?window=1h"
     headers = {"x-api-key": CQ_API_KEY}
-    data = requests.get(BASE_URL + endpoint, headers=headers).json()
-    return float(data["data"][-1]["value"])
+    response = requests.get(BASE_URL + endpoint, headers=headers).json()
+    return float(response["data"][-1]["value"])
 
 def get_hodl_wave_30d():
     endpoint = "/bitcoin/flow-ageband?window=1h"
