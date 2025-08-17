@@ -23,12 +23,14 @@ THRESHOLDS = {
 
 def get_mvrv_zscore():
     url = "https://api.lookintobitcoin.com/indicators/mvrv-zscore"
-    data = requests.get(url).json()
+    headers = {"User-Agent": "Mozilla/5.0"}
+    data = requests.get(url, headers=headers).json()
     return float(data["chart"]["series"][-1]["y"])
 
 def get_puell_multiple():
     url = "https://api.lookintobitcoin.com/indicators/puell-multiple"
-    data = requests.get(url).json()
+    headers = {"User-Agent": "Mozilla/5.0"}
+    data = requests.get(url, headers=headers).json()
     return float(data["chart"]["series"][-1]["y"])
 
 def get_log_growth_bands():
