@@ -25,21 +25,14 @@ import csv
 from io import StringIO
 
 def get_mvrv_zscore():
-    url = "https://www.lookintobitcoin.com/charts/mvrv-zscore.csv"
-    response = requests.get(url)
-    reader = csv.reader(StringIO(response.text))
-    rows = [r for r in reader if r and r[0].strip().isdigit()]
-    # rows now contains only data rows, not the header
-    last = rows[-1]
-    return float(last[1])
+    url = "https://rapidapi.rigelcelery.workers.dev/btc/mvrv_zscore"
+    data = requests.get(url).json()
+    return float(data["data"][-1][1])
 
 def get_puell_multiple():
-    url = "https://www.lookintobitcoin.com/charts/puell-multiple.csv"
-    response = requests.get(url)
-    reader = csv.reader(StringIO(response.text))
-    rows = [r for r in reader if r and r[0].strip().isdigit()]
-    last = rows[-1]
-    return float(last[1])
+    url = "https://rapidapi.rigelcelery.workers.dev/btc/puell_multiple"
+    data = requests.get(url).json()
+    return float(data["data"][-1][1])
 
 def get_log_growth_bands():
     url = "https://api.lookintobitcoin.com/indicators/logarithmic-growth-curve"
