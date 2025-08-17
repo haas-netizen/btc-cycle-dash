@@ -4,9 +4,9 @@ from datetime import datetime
 from pytrends.request import TrendReq
 from twilio.rest import Client
 
-# ------------
-# Credentials
-# ------------
+# --------------------------------
+# Credentials (from GitHub secrets)
+# --------------------------------
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN  = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_FROM_NUMBER = os.getenv("TWILIO_FROM_NUMBER")
@@ -15,9 +15,9 @@ CQ_API_KEY         = os.getenv("CRYPTOQUANT_API_KEY")
 
 BASE_URL = "https://api.cryptoquant.com"
 
-# --------------------
-# Thresholds for Alerts
-# --------------------
+# --------------------------------------------
+# Thresholds (alerts trigger if value > threshold)
+# --------------------------------------------
 THRESHOLDS = {
     "MVRV Z-Score": 7.0,
     "Puell Multiple": 4.0,
@@ -26,16 +26,11 @@ THRESHOLDS = {
     "Google Trends": 80
 }
 
-# --------------------
+# --------------------------------
 #  API Functions
-# --------------------
+# --------------------------------
 
-def get_mvrv_zscore():
-    endpoint = "/v2/bitcoin/market-mvrv-zscore?window=1h"
-    headers = {"x-api-key": CQ_API_KEY}
-    response = requests.get(BASE_URL + endpoint, headers=headers).json()
-    return float(response["data"][-1]["value"])
-
+# NOTE: using 1d window because 1h is not accessible on Pro plan
 def get_mvrv_zscore():
     endpoint = "/v2/bitcoin/market-mvrv-zscore?window=1d"
     headers = {"x-api-key": CQ_API_KEY}
@@ -47,6 +42,13 @@ def get_puell_multiple():
     headers = {"x-api-key": CQ_API_KEY}
     response = requests.get(BASE_URL + endpoint, headers=headers).json()
     return float(response["data"][-1]["value"])
+
+# 1h still ok for HODL wave
+def get_hodl_wave_30d():
+    endpoint = "/v2/bitcoin/flow-ageband?window=1h"
+    headers = {"x-api-key": CQ_API_KEY}
+    data = requests.get(BASE_URL + endpoint, headers=headers).json()
+    return float(data["data"][-1]["30d-90d"])
 
 def get_funding_rate():
     url = "https://fapi.binance.com/fapi/v1/fundingRate"
@@ -60,9 +62,9 @@ def get_google_trends():
     data = pytrends.interest_over_time()
     return int(data["bitcoin"][-1]) if not data.empty else 0
 
-# --------------------
+# --------------------------------
 #  HTML Output
-# --------------------
+# --------------------------------
 
 def generate_html(data_dict):
     html = """
@@ -91,15 +93,14 @@ def generate_html(data_dict):
     </body>
     </html>"""
 
-    # Write to repo root (so GitHub Pages can serve it)
     repo_root = os.path.dirname(os.path.abspath(__file__))
     html_path = os.path.join(repo_root, "index.html")
     with open(html_path, "w") as f:
         f.write(html)
 
-# --------------------
+# --------------------------------
 #  Main Workflow
-# --------------------
+# --------------------------------
 
 def main():
     mvrv   = get_mvrv_zscore()
@@ -118,7 +119,6 @@ def main():
 
     generate_html(data)
 
-    # Consolidated alert
     triggered = [f"{k} = {v}" for k,v in data.items()
                  if THRESHOLDS.get(k) and v > THRESHOLDS[k]]
     if triggered:
