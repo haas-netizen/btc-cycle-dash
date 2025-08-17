@@ -27,18 +27,17 @@ from io import StringIO
 def get_mvrv_zscore():
     url = "https://www.lookintobitcoin.com/charts/mvrv-zscore.csv"
     response = requests.get(url)
-    csv_data = response.text
-    reader = csv.reader(StringIO(csv_data))
-    rows = list(reader)
+    reader = csv.reader(StringIO(response.text))
+    rows = [r for r in reader if r and r[0].strip().isdigit()]
+    # rows now contains only data rows, not the header
     last = rows[-1]
     return float(last[1])
 
 def get_puell_multiple():
     url = "https://www.lookintobitcoin.com/charts/puell-multiple.csv"
     response = requests.get(url)
-    csv_data = response.text
-    reader = csv.reader(StringIO(csv_data))
-    rows = list(reader)
+    reader = csv.reader(StringIO(response.text))
+    rows = [r for r in reader if r and r[0].strip().isdigit()]
     last = rows[-1]
     return float(last[1])
 
