@@ -21,17 +21,26 @@ THRESHOLDS = {
     "Google Trends": 80
 }
 
+import csv
+from io import StringIO
+
 def get_mvrv_zscore():
-    url = "https://api.lookintobitcoin.com/indicators/mvrv-zscore"
-    headers = {"User-Agent": "Mozilla/5.0"}
-    data = requests.get(url, headers=headers).json()
-    return float(data["chart"]["series"][-1]["y"])
+    url = "https://www.lookintobitcoin.com/charts/mvrv-zscore.csv"
+    response = requests.get(url)
+    csv_data = response.text
+    reader = csv.reader(StringIO(csv_data))
+    rows = list(reader)
+    last = rows[-1]
+    return float(last[1])
 
 def get_puell_multiple():
-    url = "https://api.lookintobitcoin.com/indicators/puell-multiple"
-    headers = {"User-Agent": "Mozilla/5.0"}
-    data = requests.get(url, headers=headers).json()
-    return float(data["chart"]["series"][-1]["y"])
+    url = "https://www.lookintobitcoin.com/charts/puell-multiple.csv"
+    response = requests.get(url)
+    csv_data = response.text
+    reader = csv.reader(StringIO(csv_data))
+    rows = list(reader)
+    last = rows[-1]
+    return float(last[1])
 
 def get_log_growth_bands():
     url = "https://api.lookintobitcoin.com/indicators/logarithmic-growth-curve"
